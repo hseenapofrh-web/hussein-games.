@@ -3,244 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hussein Games</title>
+    <title>Hussein Games | Hub</title>
     <style>
-        :root {
-            --bg-dark: #0f1219;
-            --glass-bg: rgba(30, 40, 55, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent: #66c0f4; /* Steam Blue-ish */
-            --text-main: #c7d5e0;
-            --danger: #ff4d4d;
-            --success: #4caf50;
-        }
-
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% 0%, #2a475e 0%, #1b2838 100%);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header & Tabs */
-        header {
-            padding: 15px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 100;
-        }
-
-        h1 {
-            margin: 0 0 10px 0;
-            font-size: 1.5rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-            scrollbar-width: none;
-        }
-
-        .tab-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: #8c8c8c;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(102, 192, 244, 0.4);
-        }
-
+        :root { --bg: #0f1219; --glass: rgba(30, 40, 55, 0.8); --accent: #66c0f4; --text: #c7d5e0; }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle at 50% 0%, #2a475e 0%, var(--bg) 100%); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Navbar & Tabs */
+        header { padding: 15px; text-align: center; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        h1 { color: var(--accent); font-size: 1.5rem; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent); margin-bottom: 15px; }
+        .tabs { display: flex; gap: 10px; overflow-x: auto; padding: 0 10px 10px; scrollbar-width: none; }
+        .tab-btn { background: rgba(255,255,255,0.1); border: 1px solid transparent; color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent); box-shadow: 0 0 15px rgba(102,192,244,0.5); }
+        
         /* Game Container */
-        #game-container {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .game-view {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-            background: var(--bg-dark); /* Fallback */
-        }
-
-        .game-view.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Glassmorphism Cards */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 450px; /* Optimized for mobile */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h2 { margin-top: 0; color: #fff; }
-
-        /* --- Game Specific Styles --- */
-
-        /* Chess */
-        #chess-board {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            width: 100%;
-            aspect-ratio: 1;
-            border: 2px solid #444;
-            margin-bottom: 10px;
-        }
-        .square {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.8rem;
-            cursor: pointer;
-        }
-        .white-sq { background-color: #eeeed2; color: black; }
-        .black-sq { background-color: #769656; color: black; }
-        .selected { background-color: #bbc938 !important; }
-        .last-move { background-color: #f5f682; }
-        .piece { pointer-events: none; }
+        .container { flex: 1; position: relative; padding: 20px; display: flex; justify-content: center; align-items: center; }
+        .game-panel { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; width: 100%; max-width: 400px; display: none; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .game-panel.active { display: flex; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
+        
+        h2 { color: #fff; margin-bottom: 15px; }
+        .btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.9); }
 
         /* Snake */
-        canvas#snakeCanvas {
-            background: #000;
-            border: 2px solid var(--accent);
-            border-radius: 8px;
-            touch-action: none;
-        }
+        #snakeCanvas { background: #000; border: 2px solid #334155; border-radius: 8px; }
+        .snake-controls { display: grid; grid-template-areas: ". u ." "l d r"; gap: 10px; margin-top: 15px; }
+        .s-btn { width: 60px; height: 60px; background: #334155; border: none; border-radius: 12px; color: #fff; font-size: 1.5rem; }
+        .s-btn:active { background: var(--accent); }
 
         /* XO */
-        .xo-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 300px;
-            aspect-ratio: 1;
-        }
-        .xo-cell {
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
+        .xo-grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 8px; }
+        .xo-cell { width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+
+        /* Chess */
+        .chess-board { display: grid; grid-template-columns: repeat(8, 35px); border: 2px solid #fff; }
+        .square { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .white-sq { background: #eeeed2; color: #000; }
+        .black-sq { background: #769656; color: #000; }
+        .selected { background: rgba(255, 255, 0, 0.5) !important; }
+
         /* Memory */
-        .memory-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 350px;
-        }
-        .memory-card {
-            aspect-ratio: 1;
-            background: var(--accent);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transform: scale(1);
-            transition: transform 0.2s;
-        }
-        .memory-card.flipped {
-            background: #fff;
-            transform: rotateY(180deg);
-        }
-        .memory-card.matched {
-            background: var(--success);
-            opacity: 0.5;
-        }
+        .mem-grid { display: grid; grid-template-columns: repeat(4, 60px); gap: 10px; }
+        .mem-card { width: 60px; height: 60px; background: #334155; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; transition: 0.3s; }
+        .mem-card.flipped { background: #fff; transform: rotateY(180deg); }
 
         /* Flappy */
-        canvas#flappyCanvas {
-            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
-            border-radius: 8px;
-            border: 2px solid #fff;
+        #flappyCanvas { background: #1e293b; border: 2px solid var(--accent); border-radius: 8px; }
+
+        /* Speed */
+        .speed-btn { width: 120px; height: 120px; border-radius: 50%; background: var(--accent); border: none; font-size: 2rem; color: #000; box-shadow: 0 0 20px var(--accent); }
+        .speed-btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>HUSSEIN GAMES</h1>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('tab-chess')">شطرنج</button>
+            <button class="tab-btn" onclick="showTab('tab-snake')">الحية</button>
+            <button class="tab-btn" onclick="showTab('tab-xo')">XO</button>
+            <button class="tab-btn" onclick="showTab('tab-mem')">الذاكرة</button>
+            <button class="tab-btn" onclick="showTab('tab-flappy')">الطيار</button>
+            <button class="tab-btn" onclick="showTab('tab-speed')">السرعة</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div id="tab-chess" class="game-panel active">
+            <h2>شطرنج (لاعبين)</h2>
+            <div id="status-chess" style="margin-bottom:10px; color:var(--accent);">دور: الأبيض</div>
+            <div class="chess-board" id="chess-board"></div>
+            <button class="btn" onclick="initChess()">إعادة الرقعة</button>
+        </div>
+
+        <div id="tab-snake" class="game-panel">
+            <h2>الحية <span id="s-score">0</span></h2>
+            <canvas id="snakeCanvas" width="280" height="280"></canvas>
+            <div class="snake-controls">
+                <button class="s-btn" style="grid-area: u" onpointerdown="sDir('up')">↑</button>
+                <button class="s-btn" style="grid-area: l" onpointerdown="sDir('left')">←</button>
+                <button class="s-btn" style="grid-area: d" onpointerdown="sDir('down')">↓</button>
+                <button class="s-btn" style="grid-area: r" onpointerdown="sDir('right')">→</button>
+            </div>
+        </div>
+
+        <div id="tab-xo" class="game-panel">
+            <h2>لعبة XO</h2>
+            <div id="xo-status" style="margin-bottom:10px">دور: X</div>
+            <div class="xo-grid" id="xo-grid"></div>
+            <button class="btn" onclick="initXO()">إعادة اللعب</button>
+        </div>
+
+        <div id="tab-mem" class="game-panel">
+            <h2>تطابق الذاكرة</h2>
+            <div class="mem-grid" id="mem-grid"></div>
+            <button class="btn" onclick="initMem()">لعبة جديدة</button>
+        </div>
+
+        <div id="tab-flappy" class="game-panel">
+            <h2>الطيار <span id="f-score">0</span></h2>
+            <canvas id="flappyCanvas" width="280" height="350" onpointerdown="flap()"></canvas>
+            <button class="btn" onclick="initFlappy()">ابدأ</button>
+        </div>
+
+        <div id="tab-speed" class="game-panel">
+            <h2>تحدي السرعة</h2>
+            <p id="sp-time" style="margin-bottom:20px; font-size:1.2rem;">الوقت: 10s</p>
+            <button class="speed-btn" id="sp-btn" onpointerdown="spClick()">0</button>
+            <button class="btn" onclick="startSpeed()">ابدأ التحدي</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab Management
+        let activeLoops = {};
+        function showTab(id) {
+            document.querySelectorAll('.game-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+            // Pause all, resume snake/flappy if active
+            activeLoops.snake = (id === 'tab-snake');
+            activeLoops.flappy = (id === 'tab-flappy');
         }
 
-        /* Speed Clicker */
-        .click-btn {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: var(--accent);
-            border: none;
-            font-size: 1.2rem;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 0 20px var(--accent);
-            transition: transform 0.1s;
+        // --- 1. CHESS LOGIC (Rules based PvP) ---
+        const initialBoard = [
+            '♜','♞','♝','♛','♚','♝','♞','♜','♟','♟','♟','♟','♟','♟','♟','♟',
+            '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',
+            '♙','♙','♙','♙','♙','♙','♙','♙','♖','♘','♗','♕','♔','♗','♘','♖'
+        ];
+        let chessTurn = 'white', selectedSq = null;
+        function initChess() {
+            const cb = document.getElementById('chess-board'); cb.innerHTML = '';
+            chessTurn = 'white'; document.getElementById('status-chess').innerText = 'دور: الأبيض'; selectedSq = null;
+            for(let i=0; i<64; i++) {
+                let sq = document.createElement('div');
+                sq.className = `square ${(Math.floor(i/8)+i)%2===0 ? 'white-sq' : 'black-sq'}`;
+                sq.innerText = initialBoard[i]; sq.dataset.idx = i;
+                sq.onpointerdown = () => chessClick(sq);
+                cb.appendChild(sq);
+            }
         }
-        .click-btn:active { transform: scale(0.95); }
+        function isWhite(piece) { return ['♙','♖','♘','♗','♕','♔'].includes(piece); }
+        function isBlack(piece) { return ['♟','♜','♞','♝','♛','♚'].includes(piece); }
+        function chessClick(sq) {
+            if(selectedSq) {
+                if(selectedSq === sq) { selectedSq.classList.remove('selected'); selectedSq = null; return; }
+                // Basic Capture/Move logic (prevents friendly fire)
+                if((chessTurn === 'white' && isWhite(sq.innerText)) || (chessTurn === 'black' && isBlack(sq.innerText))) {
+                    selectedSq.classList.remove('selected'); selectedSq = sq; sq.classList.add('selected'); return;
+                }
+                sq.innerText = selectedSq.innerText; selectedSq.innerText = '';
+                selectedSq.classList.remove('selected'); selectedSq = null;
+                chessTurn = chessTurn === 'white' ? 'black' : 'white';
+                document.getElementById('status-chess').innerText = `دور: ${chessTurn === 'white' ? 'الأبيض' : 'الأسود'}`;
+            } else {
+                if((chessTurn === 'white' && isWhite(sq.innerText)) || (chessTurn === 'black' && isBlack(sq.innerText))) {
+                    selectedSq = sq; sq.classList.add('selected');
+                }
+            }
+        }
+        initChess();
 
-        /* Utility */
-        .btn-reset {
-            margin-top: 15px;
-            padding: 10px 20px;
-            background
+        // --- 2. SNAKE LOGIC ---
+        const sCv = document.getElementById('snakeCanvas'), sCtx = sCv.getContext('2d');
+        let snake = [{x:10, y:10}], food = {x:5, y:5}, sdx=0, sdy=0, sScore=0;
+        activeLoops.snake = false;
+        setInterval(() => {
+            if(!activeLoops.snake) return;
+            sCtx.fillStyle="#000"; sCtx.fillRect(0,0,280,280);
+            sCtx.fillStyle= "var(--accent)"; snake.forEach(p => sCtx.fillRect(p.x*14, p.y*14, 13, 13));
+            sCtx.fillStyle="#ff4d4d"; sCtx.fillRect(food.x*14, food.y*14, 13, 13);
+            let head = {x: snake[0].x+sdx, y: snake[0].y+sdy};
+            snake.unshift(head);
+            if(head.x===food.x && head.y===food.y){ sScore+=10; document.getElementById('s-score').innerText=sScore; food={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)}; } else snake.pop();
+            if(head.x<0||head.x>19||head.y<0||head.y>19) {snake=[{x:10,y:10}]; sdx=0; sdy=0; sScore=0; document.getElementById('s-score').innerText=0;}
+        }, 150);
+        function sDir(d) { if(d==='up'&&sdy!==1){sdx=0;sdy=-1;} if(d==='down'&&sdy!==-1){sdx=0;sdy=1;} if(d==='left'&&sdx!==1){sdx=-1;sdy=0;} if(d==='right'&&sdx!==-1){sdx=1;sdy=0;} }
+
+        // --- 3. XO LOGIC ---
+        let xoTurn = 'X', xoBoard = ["","","","","","","","",""];
+        function initXO() {
+            const xg = document.getElementById('xo-grid'); xg.innerHTML=''; xoBoard=["","","","","","","","",""]; xoTurn='X'; document.getElementById('xo-status').innerText = 'دور: X';
+            for(let i=0; i<9; i++) {
+                let c = document.createElement('div'); c.className='xo-cell';
+                c.onpointerdown = () => {
+                    if(!xoBoard[i]){ xoBoard[i]=xoTurn; c.innerText=xoTurn; c.style.color=xoTurn==='X'?'var(--accent)':'#ff4d4d'; checkWin(); xoTurn=xoTurn==='X'?'O':'X'; if(xoBoard.includes("")) document.getElementById('xo-status').innerText=`دور: ${xoTurn}`; }
+                }; xg.appendChild(c);
+            }
+        }
+        function checkWin() {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let l of lines) if(xoBoard[l[0]] && xoBoard[l[0]]===xoBoard[l[1]] && xoBoard[l[0]]===xoBoard[l[2]]) { setTimeout(()=>alert(xoBoard[l[0]] + ' فاز!'), 100); return; }
+        }
+        initXO();
+
+        // --- 4. MEMORY LOGIC ---
+        const em = ['🎮','🎮','🎲','🎲','🎯','🎯','🏆','🏆','🧩','🧩','🕹️','🕹️','🚀','🚀','⚡','⚡'];
+        let mFlipped = [];
+        function initMem() {
+            const mg = document.getElementById('mem-grid'); mg.innerHTML=''; let cards = [...em].sort(()=>Math.random()-0.5); mFlipped=[];
+            cards.forEach(e => {
+                let c = document.createElement('div'); c.className='mem-card';
+                c.onpointerdown = () => {
+                    if(mFlipped.length<2 && !c.classList.contains('flipped')){
+                        c.innerText=e; c.classList.add('flipped'); mFlipped.push({el:c, val:e});
+                        if(mFlipped.length===2) { setTimeout(()=>{ if(mFlipped[0].val !== mFlipped[1].val){ mFlipped[0].el.innerText=''; mFlipped[1].el.innerText=''; mFlipped[0].el.classList.remove('flipped'); mFlipped[1].el.classList.remove('flipped'); } mFlipped=[]; }, 800); }
+                    }
+                }; mg.appendChild(c);
+            });
+        }
+        initMem();
+
+        // --- 5. FLAPPY LOGIC ---
+        const fCv = document.getElementById('flappyCanvas'), fCtx = fCv.getContext('2d');
+        let fY=150, fVy=0, pipes=[], fScore=0; activeLoops.flappy=false;
+        function initFlappy() { fY=150; fVy=0; pipes=[{x:280, y:150}]; fScore=0; activeLoops.flappy=true; }
+        function flap() { if(activeLoops.flappy) fVy = -5; }
+        setInterval(() => {
+            if(!activeLoops.flappy) return;
+            fCtx.fillStyle="#1e293b"; fCtx.fillRect(0,0,280,350);
+            fVy+=0.4; fY+=fVy; fCtx.fillStyle="var(--accent)"; fCtx.fillRect(50,fY,20,20);
+            pipes.forEach(p => { p.x-=2; fCtx.fillStyle="#4caf50"; fCtx.fillRect(p.x,0,30,p.y); fCtx.fillRect(p.x,p.y+100,30,350);
+                if(p.x===50){fScore++; document.getElementById('f-score').innerText=fScore;}
+                if(50<p.x+30 && 70>p.x && (fY<p.y || fY+20>p.y+100)) activeLoops.flappy=false;
+            });
+            if(pipes[0].x < -30) pipes.shift();
+            if(pipes[pipes.length-1].x < 150) pipes.push({x:280, y:Math.random()*150+50});
+            if(fY>350 || fY<0) activeLoops.flappy=false;
+        }, 20);
+
+        // --- 6. SPEED LOGIC ---
+        let spScore=0, spActive=false;
+        function startSpeed() { spScore=0; spActive=true; document.getElementById('sp-btn').innerText=0; let t=10; document.getElementById('sp-time').innerText=`الوقت: ${t}s`;
+            let int = setInterval(()=>{ t--; document.getElementById('sp-time').innerText=`الوقت: ${t}s`; if(t<=0){clearInterval(int); spActive=false; alert('انتهى الوقت! نقاطك: '+spScore);} },1000);
+        }
+        function spClick() { if(spActive) { spScore++; document.getElementById('sp-btn').innerText=spScore; } }
+
+    </script>
+</body>
+</html>
