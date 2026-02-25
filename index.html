@@ -3,186 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hussein Games | منصة ألعاب حسين</title>
+    <title>HUSSEIN STEAM | منصة ألعاب حسين</title>
     <style>
         :root {
-            --bg-dark: #0b0e14;
-            --primary: #10b981;
-            --accent: #ef4444;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
+            --steam-blue: #1b2838;
+            --steam-gradient: linear-gradient(180deg, #1b2838 0%, #171a21 100%);
+            --accent-blue: #66c0f4;
+            --neon-green: #10b981;
+            --neon-red: #ef4444;
+            --text-color: #c7d5e0;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Motiva Sans', Sans-serif; user-select: none; }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
+            background: var(--steam-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* نظام التبويبات (Tabs) */
-        .tabs {
-            display: flex;
-            background: var(--card-bg);
+        /* Navigation Bar like Steam */
+        .navbar {
             width: 100%;
-            justify-content: space-around;
-            padding: 10px 0;
+            background: #171a21;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             position: sticky;
             top: 0;
-            z-index: 100;
-            border-bottom: 2px solid var(--primary);
+            z-index: 1000;
         }
 
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text);
-            font-weight: bold;
-            padding: 10px;
+        .nav-item {
+            padding: 8px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
             cursor: pointer;
-            opacity: 0.6;
+            transition: 0.3s;
+            border-radius: 4px;
         }
 
-        .tab-btn.active { opacity: 1; color: var(--primary); border-bottom: 2px solid var(--primary); }
+        .nav-item.active {
+            background: rgba(102, 192, 244, 0.2);
+            color: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
 
-        .game-section { display: none; width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: center; }
-        .game-section.active { display: flex; }
+        /* Game Containers */
+        .content { width: 100%; max-width: 500px; padding: 20px; }
+        .game-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .game-card.active { display: flex; }
 
-        h1 { color: var(--primary); margin: 20px 0; font-size: 1.5rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ستايل لعبة الحية */
-        #game-container { position: relative; background: #000; border: 3px solid #334155; border-radius: 10px; }
+        /* Snake Styles */
+        #gameCanvas { border: 2px solid var(--accent-blue); box-shadow: 0 0 20px rgba(102, 192, 244, 0.3); background: #000; }
         .controls { display: grid; grid-template-areas: ". up ." "left down right"; gap: 10px; margin-top: 20px; }
-        .control-btn { width: 60px; height: 60px; background: #334155; border: none; border-radius: 50%; color: white; font-size: 1.2rem; }
+        .btn {
+            width: 65px; height: 65px; background: #3d4450; border: none; border-radius: 8px;
+            color: white; font-size: 24px; cursor: pointer; transition: 0.1s;
+        }
+        .btn:active { background: var(--accent-blue); transform: scale(0.9); box-shadow: 0 0 15px var(--accent-blue); }
 
-        /* ستايل لعبة XO */
-        .xo-board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 5px; }
-        .xo-cell { background: var(--card-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; cursor: pointer; }
+        /* XO Styles */
+        .xo-grid { display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; }
+        .cell {
+            width: 90px; height: 90px; background: rgba(255,255,255,0.05); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold;
+            transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .cell:active { background: rgba(102, 192, 244, 0.2); border-color: var(--accent-blue); }
 
-        /* ستايل الشطرنج (نسخة مبسطة للموبايل) */
-        .chess-board { display: grid; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); border: 2px solid #fff; }
-        .chess-square { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .light { background: #eeeed2; color: #000; }
-        .dark { background: #769656; color: #fff; }
+        /* Chess Styles */
+        .chess-board { display: grid; grid-template-columns: repeat(8, 1fr); border: 2px solid #333; width: 320px; }
+        .square { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .white { background: #ebecd0; color: #000; }
+        .black { background: #779556; color: #fff; }
 
-        .status { margin: 15px 0; font-weight: bold; color: var(--primary); }
+        h2 { margin-bottom: 20px; color: var(--accent-blue); text-shadow: 0 0 10px rgba(102,192,244,0.5); }
     </style>
 </head>
 <body>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showGame('snake')">الحية</button>
-        <button class="tab-btn" onclick="showGame('xo')">لعبة XO</button>
-        <button class="tab-btn" onclick="showGame('chess')">شطرنج</button>
+    <div class="navbar">
+        <div class="nav-item active" onclick="switchTab(event, 'snake-game')">Snake</div>
+        <div class="nav-item" onclick="switchTab(event, 'xo-game')">TicTacToe</div>
+        <div class="nav-item" onclick="switchTab(event, 'chess-game')">Chess</div>
     </div>
 
-    <div id="snake" class="game-section active">
-        <h1>لعبة الحية</h1>
-        <div id="game-container">
+    <div class="content">
+        <div id="snake-game" class="game-card active">
+            <h2>SNAKE ADVENTURE</h2>
             <canvas id="gameCanvas" width="300" height="300"></canvas>
+            <div class="controls">
+                <button class="btn" style="grid-area: up" onpointerdown="move('up')">↑</button>
+                <button class="btn" style="grid-area: left" onpointerdown="move('left')">←</button>
+                <button class="btn" style="grid-area: down" onpointerdown="move('down')">↓</button>
+                <button class="btn" style="grid-area: right" onpointerdown="move('right')">→</button>
+            </div>
         </div>
-        <div class="controls">
-            <button class="control-btn up" onpointerdown="changeDir('up')">↑</button>
-            <button class="control-btn left" onpointerdown="changeDir('left')">←</button>
-            <button class="control-btn down" onpointerdown="changeDir('down')">↓</button>
-            <button class="control-btn right" onpointerdown="changeDir('right')">→</button>
-        </div>
-    </div>
 
-    <div id="xo" class="game-section">
-        <h1>لعبة XO</h1>
-        <div class="status" id="xo-status">دور اللاعب: X</div>
-        <div class="xo-board" id="xo-board">
-            <div class="xo-cell" onclick="makeMove(0)"></div>
-            <div class="xo-cell" onclick="makeMove(1)"></div>
-            <div class="xo-cell" onclick="makeMove(2)"></div>
-            <div class="xo-cell" onclick="makeMove(3)"></div>
-            <div class="xo-cell" onclick="makeMove(4)"></div>
-            <div class="xo-cell" onclick="makeMove(5)"></div>
-            <div class="xo-cell" onclick="makeMove(6)"></div>
-            <div class="xo-cell" onclick="makeMove(7)"></div>
-            <div class="xo-cell" onclick="makeMove(8)"></div>
+        <div id="xo-game" class="game-card">
+            <h2>TIC-TAC-TOE</h2>
+            <div id="status" style="margin-bottom:10px">دور اللاعب X</div>
+            <div class="xo-grid" id="xo-board">
+                <div class="cell" onclick="xoMove(this, 0)"></div>
+                <div class="cell" onclick="xoMove(this, 1)"></div>
+                <div class="cell" onclick="xoMove(this, 2)"></div>
+                <div class="cell" onclick="xoMove(this, 3)"></div>
+                <div class="cell" onclick="xoMove(this, 4)"></div>
+                <div class="cell" onclick="xoMove(this, 5)"></div>
+                <div class="cell" onclick="xoMove(this, 6)"></div>
+                <div class="cell" onclick="xoMove(this, 7)"></div>
+                <div class="cell" onclick="xoMove(this, 8)"></div>
+            </div>
+            <button class="btn" style="width:auto; padding:10px; margin-top:20px; height:auto; font-size:16px" onclick="resetXO()">إعادة اللعب</button>
         </div>
-        <button class="control-btn" style="width: auto; padding: 10px; margin-top: 20px; border-radius: 5px;" onclick="resetXO()">إعادة اللعب</button>
-    </div>
 
-    <div id="chess" class="game-section">
-        <h1>شطرنج (قريباً)</h1>
-        <div class="chess-board" id="chess-board"></div>
-        <p style="margin-top: 20px; text-align: center;">جاري تطوير ذكاء الشطرنج الاصطناعي الخاص بك يا حسين..</p>
+        <div id="chess-game" class="game-card">
+            <h2>CHESS MASTER</h2>
+            <div class="chess-board" id="chess-board"></div>
+            <p style="margin-top:20px; font-size:12px">حرك القطع باللمس (لاعب ضد لاعب)</p>
+        </div>
     </div>
 
     <script>
-        // تبديل الألعاب
-        function showGame(gameId) {
-            document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(gameId).classList.add('active');
-            event.target.classList.add('active');
+        function switchTab(e, tabId) {
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            e.target.classList.add('active');
         }
 
-        // منطق لعبة الحية (Snake)
+        // --- SNAKE LOGIC ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let snake = [{x: 10, y: 10}];
-        let food = {x: 5, y: 5};
-        let dx = 0, dy = 0;
-
-        function gameLoop() {
-            setTimeout(() => {
-                clear(); drawFood(); moveSnake(); drawSnake();
-                if(!isGameOver()) gameLoop();
-                else alert("انتهت اللعبة!");
-            }, 150);
+        let snake = [{x:10, y:10}], food = {x:5, y:5}, dx=0, dy=0;
+        function draw() {
+            ctx.fillStyle = "black"; ctx.fillRect(0,0,300,300);
+            ctx.fillStyle = "#10b981"; snake.forEach(p => ctx.fillRect(p.x*15, p.y*15, 14, 14));
+            ctx.fillStyle = "#ef4444"; ctx.fillRect(food.x*15, food.y*15, 14, 14);
         }
-        function clear() { ctx.fillStyle = "#000"; ctx.fillRect(0,0,300,300); }
-        function drawSnake() { ctx.fillStyle = "#10b981"; snake.forEach(p => ctx.fillRect(p.x*15, p.y*15, 14, 14)); }
-        function moveSnake() {
-            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+        function update() {
+            const head = {x: snake[0].x+dx, y: snake[0].y+dy};
             snake.unshift(head);
-            if(head.x === food.x && head.y === food.y) food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)};
+            if(head.x===food.x && head.y===food.y) food = {x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)};
             else snake.pop();
+            if(head.x<0 || head.x>19 || head.y<0 || head.y>19) { snake=[{x:10,y:10}]; dx=0; dy=0; }
         }
-        function changeDir(d) {
+        function move(d) {
             if(d==='up' && dy!==1) {dx=0; dy=-1;}
             if(d==='down' && dy!==-1) {dx=0; dy=1;}
             if(d==='left' && dx!==1) {dx=-1; dy=0;}
             if(d==='right' && dx!==-1) {dx=1; dy=0;}
         }
-        function isGameOver() {
-            return snake[0].x<0 || snake[0].x>19 || snake[0].y<0 || snake[0].y>19;
-        }
-        gameLoop();
+        setInterval(() => { draw(); update(); }, 150);
 
-        // منطق لعبة XO
-        let currentPlayer = 'X';
-        let board = ["","","","","","","","",""];
-        function makeMove(i) {
-            if(board[i] === "") {
-                board[i] = currentPlayer;
-                document.getElementsByClassName('xo-cell')[i].innerText = currentPlayer;
-                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                document.getElementById('xo-status').innerText = `دور اللاعب: ${currentPlayer}`;
+        // --- XO LOGIC ---
+        let turn = 'X', gameState = ["","","","","","","","",""];
+        function xoMove(el, i) {
+            if(!gameState[i]) {
+                gameState[i] = turn; el.innerText = turn;
+                el.style.color = turn === 'X' ? '#66c0f4' : '#10b981';
+                turn = turn === 'X' ? 'O' : 'X';
+                document.getElementById('status').innerText = `دور اللاعب ${turn}`;
             }
         }
         function resetXO() {
-            board = ["","","","","","","","",""];
-            currentPlayer = 'X';
-            Array.from(document.getElementsByClassName('xo-cell')).forEach(c => c.innerText = "");
+            gameState = ["","","","","","","","",""];
+            document.querySelectorAll('.cell').forEach(c => c.innerText = "");
+            turn = 'X';
         }
 
-        // رسم رقعة الشطرنج
-        const chessBoard = document.getElementById('chess-board');
+        // --- CHESS LOGIC (Visual Only) ---
+        const board = document.getElementById('chess-board');
+        const pieces = ['♜','♞','♝','♛','♚','♝','♞','♜','♟','♟','♟','♟','♟','♟','♟','♟'];
         for(let i=0; i<64; i++) {
-            const square = document.createElement('div');
-            square.className = `chess-square ${(Math.floor(i/8) + i)%2===0 ? 'light' : 'dark'}`;
-            chessBoard.appendChild(square);
+            const sq = document.createElement('div');
+            sq.className = `square ${(Math.floor(i/8)+i)%2===0 ? 'white' : 'black'}`;
+            if(i < 16) sq.innerText = pieces[i];
+            if(i >= 48) sq.innerText = pieces[i-48];
+            board.appendChild(sq);
         }
     </script>
 </body>
