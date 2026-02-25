@@ -3,254 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HUSSEIN GAMES | Hub</title>
+    <title>Hussein Games</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --primary: #38bdf8;
-            --neon: #22d3ee;
-            --text: #f8fafc;
+            --bg-dark: #0f1219;
+            --glass-bg: rgba(30, 40, 55, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #66c0f4; /* Steam Blue-ish */
+            --text-main: #c7d5e0;
+            --danger: #ff4d4d;
+            --success: #4caf50;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
-            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-color) 100%);
-            color: var(--text);
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #2a475e 0%, #1b2838 100%);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header & Tabs */
+        header {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #8c8c8c;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(102, 192, 244, 0.4);
+        }
+
+        /* Game Container */
+        #game-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .game-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--bg-dark); /* Fallback */
+        }
+
+        .game-view.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 450px; /* Optimized for mobile */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding-bottom: 50px;
         }
 
-        header {
-            width: 100%; padding: 20px; text-align: center;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 1000;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        h2 { margin-top: 0; color: #fff; }
+
+        /* --- Game Specific Styles --- */
+
+        /* Chess */
+        #chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid #444;
+            margin-bottom: 10px;
+        }
+        .square {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        .white-sq { background-color: #eeeed2; color: black; }
+        .black-sq { background-color: #769656; color: black; }
+        .selected { background-color: #bbc938 !important; }
+        .last-move { background-color: #f5f682; }
+        .piece { pointer-events: none; }
+
+        /* Snake */
+        canvas#snakeCanvas {
+            background: #000;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            touch-action: none;
         }
 
-        h1 { color: var(--primary); font-size: 1.8rem; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px var(--primary); }
-
-        .container { width: 100%; max-width: 500px; padding: 20px; display: flex; flex-direction: column; gap: 40px; }
-
-        /* تصميم البطاقات الزجاجية (Glassmorphism) */
-        .game-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 25px;
-            display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
+        /* XO */
+        .xo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+            aspect-ratio: 1;
         }
-
-        .game-card:focus-within { border-color: var(--primary); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
-        .game-title { font-size: 1.5rem; margin-bottom: 15px; color: var(--neon); display: flex; justify-content: space-between; width: 100%; }
+        .xo-cell {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         
-        /* 1. Snake */
-        #snakeCanvas { background: #000; border-radius: 10px; border: 2px solid #334155; }
-        .controls { display: grid; grid-template-areas: ". up ." "left down right"; gap: 10px; margin-top: 15px; }
-        .btn { width: 60px; height: 60px; background: #334155; border: none; border-radius: 12px; color: white; font-size: 1.5rem; transition: 0.1s; }
-        .btn:active { background: var(--primary); transform: scale(0.9); }
-
-        /* 2. XO */
-        .xo-grid { display: grid; grid-template-columns: repeat(3, 90px); gap: 8px; }
-        .xo-cell { width: 90px; height: 90px; background: rgba(0,0,0,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; border: 1px solid #334155; transition: 0.2s; }
-        .xo-cell:active { background: rgba(56, 189, 248, 0.2); }
-
-        /* 3. Chess (Interactive) */
-        .chess-board { display: grid; grid-template-columns: repeat(8, 38px); border: 2px solid #cbd5e1; border-radius: 4px; overflow: hidden; }
-        .square { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: background 0.2s; }
-        .square.white { background: #e2e8f0; color: #000; }
-        .square.black { background: #64748b; color: #fff; }
-        .square.selected { background: rgba(250, 204, 21, 0.6) !important; }
-
-        /* 4. Memory Match */
-        .memory-grid { display: grid; grid-template-columns: repeat(4, 70px); gap: 10px; }
-        .card { width: 70px; height: 70px; background: #475569; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; transition: transform 0.3s; transform-style: preserve-3d; cursor: pointer; }
-        .card.flipped { background: #1e293b; transform: rotateY(180deg); border: 1px solid var(--primary); }
-
-        /* 5. Flappy Cube */
-        #flappyCanvas { background: #0f172a; border-radius: 10px; border: 2px solid #334155; }
-
-        /* 6. Speed Tap */
-        .tap-area { width: 300px; height: 200px; background: rgba(0,0,0,0.3); border-radius: 10px; position: relative; overflow: hidden; border: 1px solid #334155; }
-        .target { width: 40px; height: 40px; background: var(--neon); border-radius: 50%; position: absolute; transition: 0.1s; box-shadow: 0 0 15px var(--neon); }
-
-        .play-btn { background: var(--primary); color: #000; padding: 8px 20px; border: none; border-radius: 20px; font-weight: bold; font-size: 1rem; margin-top: 10px; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Hussein Games Hub</h1>
-    </header>
-
-    <div class="container">
-        <div class="game-card">
-            <div class="game-title"><span>🐍 الحية الكلاسيكية</span> <span id="snake-score">0</span></div>
-            <canvas id="snakeCanvas" width="300" height="300"></canvas>
-            <div class="controls">
-                <button class="btn" style="grid-area: up" onpointerdown="snakeDir('up')">↑</button>
-                <button class="btn" style="grid-area: left" onpointerdown="snakeDir('left')">←</button>
-                <button class="btn" style="grid-area: down" onpointerdown="snakeDir('down')">↓</button>
-                <button class="btn" style="grid-area: right" onpointerdown="snakeDir('right')">→</button>
-            </div>
-        </div>
-
-        <div class="game-card">
-            <div class="game-title"><span>♚ شطرنج تفاعلي</span></div>
-            <div class="chess-board" id="chess-board"></div>
-            <p style="font-size: 0.8rem; margin-top: 10px; color: #94a3b8;">اضغط على القطعة ثم اضغط على المربع المراد النقل إليه</p>
-            <button class="play-btn" onclick="initChess()">إعادة الرقعة</button>
-        </div>
-
-        <div class="game-card">
-            <div class="game-title"><span>❌ لعبة XO ⭕</span></div>
-            <div class="xo-grid" id="xo-board"></div>
-            <button class="play-btn" onclick="initXO()">إعادة اللعب</button>
-        </div>
-
-        <div class="game-card">
-            <div class="game-title"><span>🧠 تطابق الذاكرة</span></div>
-            <div class="memory-grid" id="memory-grid"></div>
-            <button class="play-btn" onclick="initMemory()">لعبة جديدة</button>
-        </div>
-
-        <div class="game-card">
-            <div class="game-title"><span>🚀 الطيار المربع</span> <span id="flappy-score">0</span></div>
-            <canvas id="flappyCanvas" width="300" height="400" onpointerdown="flap()"></canvas>
-            <p style="font-size: 0.8rem; margin-top: 10px;">المس الشاشة للقفز</p>
-            <button class="play-btn" onclick="initFlappy()">ابدأ</button>
-        </div>
-
-        <div class="game-card">
-            <div class="game-title"><span>🎯 تحدي السرعة</span> <span id="tap-score">0</span></div>
-            <div class="tap-area" id="tap-area">
-                <div class="target" id="target" onpointerdown="hitTarget()" style="display:none;"></div>
-            </div>
-            <button class="play-btn" onclick="startTapGame()">ابدأ التحدي (30 ثانية)</button>
-        </div>
-    </div>
-
-    <script>
-        // === 1. SNAKE LOGIC ===
-        const sCanvas = document.getElementById('snakeCanvas'), sCtx = sCanvas.getContext('2d');
-        let snake = [{x:10, y:10}], food = {x:5, y:5}, sdx=0, sdy=0, sScore=0;
-        function drawSnake() {
-            sCtx.fillStyle = "#000"; sCtx.fillRect(0,0,300,300);
-            sCtx.fillStyle = "#38bdf8"; snake.forEach(p => sCtx.fillRect(p.x*15, p.y*15, 14, 14));
-            sCtx.fillStyle = "#ef4444"; sCtx.fillRect(food.x*15, food.y*15, 14, 14);
-            const head = {x: snake[0].x+sdx, y: snake[0].y+sdy};
-            snake.unshift(head);
-            if(head.x===food.x && head.y===food.y){ sScore+=10; document.getElementById('snake-score').innerText=sScore; food={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)}; } else snake.pop();
-            if(head.x<0||head.x>19||head.y<0||head.y>19) {snake=[{x:10,y:10}]; sdx=0; sdy=0; sScore=0; document.getElementById('snake-score').innerText=0;}
+        /* Memory */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 350px;
         }
-        function snakeDir(d) {
-            if(d==='up'&&sdy!==1){sdx=0;sdy=-1;} if(d==='down'&&sdy!==-1){sdx=0;sdy=1;}
-            if(d==='left'&&sdx!==1){sdx=-1;sdy=0;} if(d==='right'&&sdx!==-1){sdx=1;sdy=0;}
+        .memory-card {
+            aspect-ratio: 1;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transform: scale(1);
+            transition: transform 0.2s;
         }
-        setInterval(drawSnake, 150);
-
-        // === 2. INTERACTIVE CHESS LOGIC ===
-        const initialChess = [
-            '♜','♞','♝','♛','♚','♝','♞','♜', '♟','♟','♟','♟','♟','♟','♟','♟',
-            '','','','','','','','', '','','','','','','','', '','','','','','','','', '','','','','','','','',
-            '♙','♙','♙','♙','♙','♙','♙','♙', '♖','♘','♗','♕','♔','♗','♘','♖'
-        ];
-        let chessSquares = [], selectedSq = null;
-        function initChess() {
-            const cb = document.getElementById('chess-board'); cb.innerHTML = ''; chessSquares = []; selectedSq = null;
-            for(let i=0; i<64; i++) {
-                let sq = document.createElement('div');
-                sq.className = `square ${(Math.floor(i/8)+i)%2===0 ? 'white' : 'black'}`;
-                sq.innerText = initialChess[i];
-                sq.dataset.index = i;
-                sq.onpointerdown = () => handleChessClick(sq);
-                cb.appendChild(sq); chessSquares.push(sq);
-            }
+        .memory-card.flipped {
+            background: #fff;
+            transform: rotateY(180deg);
         }
-        function handleChessClick(sq) {
-            if(selectedSq) {
-                if(selectedSq !== sq) { sq.innerText = selectedSq.innerText; selectedSq.innerText = ''; }
-                selectedSq.classList.remove('selected'); selectedSq = null;
-            } else {
-                if(sq.innerText !== '') { selectedSq = sq; sq.classList.add('selected'); }
-            }
-        }
-        initChess();
-
-        // === 3. XO LOGIC ===
-        let xoTurn = 'X', xoBoard = ["","","","","","","","",""];
-        function initXO() {
-            const xg = document.getElementById('xo-board'); xg.innerHTML=''; xoBoard=["","","","","","","","",""]; xoTurn='X';
-            for(let i=0; i<9; i++) {
-                let c = document.createElement('div'); c.className='xo-cell';
-                c.onpointerdown = () => { if(!xoBoard[i]){ xoBoard[i]=xoTurn; c.innerText=xoTurn; c.style.color=xoTurn==='X'?'#38bdf8':'#f43f5e'; xoTurn=xoTurn==='X'?'O':'X'; } };
-                xg.appendChild(c);
-            }
-        }
-        initXO();
-
-        // === 4. MEMORY MATCH ===
-        const emojis = ['🍎','🍎','🍌','🍌','🍇','🍇','🍉','🍉'];
-        let memCards = [], flipped = [];
-        function initMemory() {
-            const mg = document.getElementById('memory-grid'); mg.innerHTML=''; memCards = [...emojis].sort(()=>Math.random()-0.5); flipped=[];
-            memCards.forEach((e, i) => {
-                let c = document.createElement('div'); c.className='card';
-                c.onpointerdown = () => {
-                    if(flipped.length<2 && !c.classList.contains('flipped')){
-                        c.innerText=e; c.classList.add('flipped'); flipped.push({el:c, val:e});
-                        if(flipped.length===2) {
-                            setTimeout(()=>{
-                                if(flipped[0].val !== flipped[1].val){ flipped[0].el.innerText=''; flipped[1].el.innerText=''; flipped[0].el.classList.remove('flipped'); flipped[1].el.classList.remove('flipped'); }
-                                flipped=[];
-                            }, 800);
-                        }
-                    }
-                };
-                mg.appendChild(c);
-            });
-        }
-        initMemory();
-
-        // === 5. FLAPPY CUBE ===
-        const fCanvas = document.getElementById('flappyCanvas'), fCtx = fCanvas.getContext('2d');
-        let fY=200, fVy=0, pipes=[], fScore=0, fActive=false, fLoop;
-        function initFlappy() { fY=200; fVy=0; pipes=[{x:300, y:150}]; fScore=0; fActive=true; document.getElementById('flappy-score').innerText=0; clearInterval(fLoop); fLoop=setInterval(drawFlappy, 20); }
-        function flap() { if(fActive) fVy = -6; }
-        function drawFlappy() {
-            fCtx.fillStyle="#0f172a"; fCtx.fillRect(0,0,300,400);
-            if(!fActive) return;
-            fVy += 0.3; fY += fVy;
-            fCtx.fillStyle="#38bdf8"; fCtx.fillRect(50, fY, 20, 20);
-            pipes.forEach(p => {
-                p.x -= 3;
-                fCtx.fillStyle="#10b981"; fCtx.fillRect(p.x, 0, 30, p.y); fCtx.fillRect(p.x, p.y+100, 30, 400);
-                if(p.x === 50) { fScore++; document.getElementById('flappy-score').innerText=fScore; }
-                if(50 < p.x+30 && 70 > p.x && (fY < p.y || fY+20 > p.y+100)) fActive=false;
-            });
-            if(pipes[0].x < -30) pipes.shift();
-            if(pipes[pipes.length-1].x < 150) pipes.push({x:300, y:Math.random()*200+50});
-            if(fY>400 || fY<0) fActive=false;
+        .memory-card.matched {
+            background: var(--success);
+            opacity: 0.5;
         }
 
-        // === 6. SPEED TAP ===
-        let tScore=0, tActive=false, tTimer;
-        function startTapGame() {
-            if(tActive) return; tActive=true; tScore=0; document.getElementById('tap-score').innerText=tScore;
-            const target = document.getElementById('target'); target.style.display='block'; moveTarget();
-            tTimer = setTimeout(()=>{ tActive=false; target.style.display='none'; alert('الوقت انتهى! نقاطك: '+tScore); }, 30000);
+        /* Flappy */
+        canvas#flappyCanvas {
+            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            border-radius: 8px;
+            border: 2px solid #fff;
         }
-        function moveTarget() { const x=Math.random()*260, y=Math.random()*160; const tg=document.getElementById('target'); tg.style.left=x+'px'; tg.style.top=y+'px'; }
-        function hitTarget() { if(tActive){ tScore++; document.getElementById('tap-score').innerText=tScore; moveTarget(); } }
-    </script>
-</body>
-</html>
+
+        /* Speed Clicker */
+        .click-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 20px var(--accent);
+            transition: transform 0.1s;
+        }
+        .click-btn:active { transform: scale(0.95); }
+
+        /* Utility */
+        .btn-reset {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background
