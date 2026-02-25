@@ -1,213 +1,160 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hussein Games | Hub</title>
+    <title>HUSSEIN GAMES | Cyber Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f1219; --glass: rgba(30, 40, 55, 0.8); --accent: #66c0f4; --text: #c7d5e0; }
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle at 50% 0%, #2a475e 0%, var(--bg) 100%); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        /* Navbar & Tabs */
-        header { padding: 15px; text-align: center; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        h1 { color: var(--accent); font-size: 1.5rem; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent); margin-bottom: 15px; }
-        .tabs { display: flex; gap: 10px; overflow-x: auto; padding: 0 10px 10px; scrollbar-width: none; }
-        .tab-btn { background: rgba(255,255,255,0.1); border: 1px solid transparent; color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
-        .tab-btn.active { background: var(--accent); box-shadow: 0 0 15px rgba(102,192,244,0.5); }
-        
-        /* Game Container */
-        .container { flex: 1; position: relative; padding: 20px; display: flex; justify-content: center; align-items: center; }
-        .game-panel { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; width: 100%; max-width: 400px; display: none; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .game-panel.active { display: flex; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
-        
-        h2 { color: #fff; margin-bottom: 15px; }
-        .btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; transition: 0.2s; }
-        .btn:active { transform: scale(0.9); }
+        :root {
+            --bg-dark: #0b0e14;
+            --bg-card: #151a23;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+
+        /* --- Header --- */
+        header { width: 100%; height: 70px; display: flex; justify-content: center; align-items: center; background: rgba(11, 14, 20, 0.9); border-bottom: 1px solid rgba(0, 243, 255, 0.3); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-cyan); }
+        .logo span { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+
+        /* --- Main Layout --- */
+        .hub-container { width: 100%; max-width: 500px; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        .tabs { display: flex; justify-content: space-between; background: var(--bg-card); padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn { flex: 1; background: none; border: none; color: var(--text-muted); font-family: 'Orbitron', sans-serif; font-size: 0.9rem; padding: 10px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .tab-btn.active { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); border-bottom: 2px solid var(--neon-cyan); }
+
+        .game-panel { display: none; flex-direction: column; align-items: center; background: var(--bg-card); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(188, 19, 254, 0.1); animation: fadeIn 0.4s; }
+        .game-panel.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        h2 { font-family: 'Orbitron', sans-serif; color: var(--neon-purple); margin-bottom: 15px; letter-spacing: 1px; }
+
+        /* --- Game Styles --- */
+        
         /* Snake */
-        #snakeCanvas { background: #000; border: 2px solid #334155; border-radius: 8px; }
-        .snake-controls { display: grid; grid-template-areas: ". u ." "l d r"; gap: 10px; margin-top: 15px; }
-        .s-btn { width: 60px; height: 60px; background: #334155; border: none; border-radius: 12px; color: #fff; font-size: 1.5rem; }
-        .s-btn:active { background: var(--accent); }
+        #snakeCanvas { background: #000; border: 2px solid var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); border-radius: 4px; }
+        .controls { display: grid; grid-template-areas: ". up ." "left down right"; gap: 10px; margin-top: 20px; }
+        .ctrl-btn { width: 60px; height: 60px; background: #111; border: 1px solid var(--neon-cyan); border-radius: 8px; color: var(--neon-cyan); font-size: 1.5rem; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
+        .ctrl-btn:active { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); transform: scale(0.9); }
 
         /* XO */
-        .xo-grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 8px; }
-        .xo-cell { width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
-
-        /* Chess */
-        .chess-board { display: grid; grid-template-columns: repeat(8, 35px); border: 2px solid #fff; }
-        .square { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .white-sq { background: #eeeed2; color: #000; }
-        .black-sq { background: #769656; color: #000; }
-        .selected { background: rgba(255, 255, 0, 0.5) !important; }
+        .xo-board { display: grid; grid-template-columns: repeat(3, 80px); gap: 5px; }
+        .xo-cell { width: 80px; height: 80px; background: #111; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-family: 'Orbitron', sans-serif; cursor: pointer; transition: 0.2s; }
+        .xo-cell.x { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+        .xo-cell.o { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
 
         /* Memory */
-        .mem-grid { display: grid; grid-template-columns: repeat(4, 60px); gap: 10px; }
-        .mem-card { width: 60px; height: 60px; background: #334155; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; transition: 0.3s; }
-        .mem-card.flipped { background: #fff; transform: rotateY(180deg); }
+        .mem-board { display: grid; grid-template-columns: repeat(4, 65px); gap: 8px; }
+        .mem-card { width: 65px; height: 65px; background: var(--neon-purple); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; transition: 0.3s; box-shadow: 0 0 10px rgba(188, 19, 254, 0.3); cursor: pointer; }
+        .mem-card.flipped { background: #111; border: 1px solid var(--neon-purple); box-shadow: none; transform: rotateY(180deg); }
 
-        /* Flappy */
-        #flappyCanvas { background: #1e293b; border: 2px solid var(--accent); border-radius: 8px; }
+        .action-btn { margin-top: 20px; padding: 10px 30px; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #000; background: var(--neon-cyan); border: none; border-radius: 4px; cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .action-btn:active { transform: scale(0.95); }
 
-        /* Speed */
-        .speed-btn { width: 120px; height: 120px; border-radius: 50%; background: var(--accent); border: none; font-size: 2rem; color: #000; box-shadow: 0 0 20px var(--accent); }
-        .speed-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>HUSSEIN GAMES</h1>
-        <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('tab-chess')">شطرنج</button>
-            <button class="tab-btn" onclick="showTab('tab-snake')">الحية</button>
-            <button class="tab-btn" onclick="showTab('tab-xo')">XO</button>
-            <button class="tab-btn" onclick="showTab('tab-mem')">الذاكرة</button>
-            <button class="tab-btn" onclick="showTab('tab-flappy')">الطيار</button>
-            <button class="tab-btn" onclick="showTab('tab-speed')">السرعة</button>
-        </div>
+        <div class="logo">HUSSEIN <span>GAMES</span></div>
     </header>
 
-    <div class="container">
-        
-        <div id="tab-chess" class="game-panel active">
-            <h2>شطرنج (لاعبين)</h2>
-            <div id="status-chess" style="margin-bottom:10px; color:var(--accent);">دور: الأبيض</div>
-            <div class="chess-board" id="chess-board"></div>
-            <button class="btn" onclick="initChess()">إعادة الرقعة</button>
+    <div class="hub-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('snake-tab')">SNAKE</button>
+            <button class="tab-btn" onclick="switchTab('xo-tab')">TIC-TAC-TOE</button>
+            <button class="tab-btn" onclick="switchTab('mem-tab')">MEMORY</button>
         </div>
 
-        <div id="tab-snake" class="game-panel">
-            <h2>الحية <span id="s-score">0</span></h2>
+        <div id="snake-tab" class="game-panel active">
+            <h2>CYBER SNAKE</h2>
+            <div style="margin-bottom: 10px; color: var(--neon-cyan); font-family: 'Orbitron';">SCORE: <span id="s-score">0</span></div>
             <canvas id="snakeCanvas" width="280" height="280"></canvas>
-            <div class="snake-controls">
-                <button class="s-btn" style="grid-area: u" onpointerdown="sDir('up')">↑</button>
-                <button class="s-btn" style="grid-area: l" onpointerdown="sDir('left')">←</button>
-                <button class="s-btn" style="grid-area: d" onpointerdown="sDir('down')">↓</button>
-                <button class="s-btn" style="grid-area: r" onpointerdown="sDir('right')">→</button>
+            <div class="controls">
+                <div class="ctrl-btn" style="grid-area: up" onpointerdown="setDir('up')">↑</div>
+                <div class="ctrl-btn" style="grid-area: left" onpointerdown="setDir('left')">←</div>
+                <div class="ctrl-btn" style="grid-area: down" onpointerdown="setDir('down')">↓</div>
+                <div class="ctrl-btn" style="grid-area: right" onpointerdown="setDir('right')">→</div>
             </div>
         </div>
 
-        <div id="tab-xo" class="game-panel">
-            <h2>لعبة XO</h2>
-            <div id="xo-status" style="margin-bottom:10px">دور: X</div>
-            <div class="xo-grid" id="xo-grid"></div>
-            <button class="btn" onclick="initXO()">إعادة اللعب</button>
+        <div id="xo-tab" class="game-panel">
+            <h2>NEON X-O</h2>
+            <div id="xo-status" style="margin-bottom: 15px; font-family: 'Orbitron'; color: var(--text-muted);">PLAYER: X</div>
+            <div class="xo-board" id="xo-grid"></div>
+            <button class="action-btn" onclick="initXO()">RESET MATCH</button>
         </div>
 
-        <div id="tab-mem" class="game-panel">
-            <h2>تطابق الذاكرة</h2>
-            <div class="mem-grid" id="mem-grid"></div>
-            <button class="btn" onclick="initMem()">لعبة جديدة</button>
+        <div id="mem-tab" class="game-panel">
+            <h2>HACK MATCH</h2>
+            <div class="mem-board" id="mem-grid"></div>
+            <button class="action-btn" onclick="initMem()">REBOOT SYSTEM</button>
         </div>
-
-        <div id="tab-flappy" class="game-panel">
-            <h2>الطيار <span id="f-score">0</span></h2>
-            <canvas id="flappyCanvas" width="280" height="350" onpointerdown="flap()"></canvas>
-            <button class="btn" onclick="initFlappy()">ابدأ</button>
-        </div>
-
-        <div id="tab-speed" class="game-panel">
-            <h2>تحدي السرعة</h2>
-            <p id="sp-time" style="margin-bottom:20px; font-size:1.2rem;">الوقت: 10s</p>
-            <button class="speed-btn" id="sp-btn" onpointerdown="spClick()">0</button>
-            <button class="btn" onclick="startSpeed()">ابدأ التحدي</button>
-        </div>
-
     </div>
 
     <script>
-        // Tab Management
-        let activeLoops = {};
-        function showTab(id) {
+        let loops = { snake: true };
+
+        function switchTab(id) {
             document.querySelectorAll('.game-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.target.classList.add('active');
-            // Pause all, resume snake/flappy if active
-            activeLoops.snake = (id === 'tab-snake');
-            activeLoops.flappy = (id === 'tab-flappy');
+            loops.snake = (id === 'snake-tab');
         }
 
-        // --- 1. CHESS LOGIC (Rules based PvP) ---
-        const initialBoard = [
-            '♜','♞','♝','♛','♚','♝','♞','♜','♟','♟','♟','♟','♟','♟','♟','♟',
-            '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',
-            '♙','♙','♙','♙','♙','♙','♙','♙','♖','♘','♗','♕','♔','♗','♘','♖'
-        ];
-        let chessTurn = 'white', selectedSq = null;
-        function initChess() {
-            const cb = document.getElementById('chess-board'); cb.innerHTML = '';
-            chessTurn = 'white'; document.getElementById('status-chess').innerText = 'دور: الأبيض'; selectedSq = null;
-            for(let i=0; i<64; i++) {
-                let sq = document.createElement('div');
-                sq.className = `square ${(Math.floor(i/8)+i)%2===0 ? 'white-sq' : 'black-sq'}`;
-                sq.innerText = initialBoard[i]; sq.dataset.idx = i;
-                sq.onpointerdown = () => chessClick(sq);
-                cb.appendChild(sq);
-            }
-        }
-        function isWhite(piece) { return ['♙','♖','♘','♗','♕','♔'].includes(piece); }
-        function isBlack(piece) { return ['♟','♜','♞','♝','♛','♚'].includes(piece); }
-        function chessClick(sq) {
-            if(selectedSq) {
-                if(selectedSq === sq) { selectedSq.classList.remove('selected'); selectedSq = null; return; }
-                // Basic Capture/Move logic (prevents friendly fire)
-                if((chessTurn === 'white' && isWhite(sq.innerText)) || (chessTurn === 'black' && isBlack(sq.innerText))) {
-                    selectedSq.classList.remove('selected'); selectedSq = sq; sq.classList.add('selected'); return;
-                }
-                sq.innerText = selectedSq.innerText; selectedSq.innerText = '';
-                selectedSq.classList.remove('selected'); selectedSq = null;
-                chessTurn = chessTurn === 'white' ? 'black' : 'white';
-                document.getElementById('status-chess').innerText = `دور: ${chessTurn === 'white' ? 'الأبيض' : 'الأسود'}`;
-            } else {
-                if((chessTurn === 'white' && isWhite(sq.innerText)) || (chessTurn === 'black' && isBlack(sq.innerText))) {
-                    selectedSq = sq; sq.classList.add('selected');
-                }
-            }
-        }
-        initChess();
-
-        // --- 2. SNAKE LOGIC ---
+        // --- SNAKE ---
         const sCv = document.getElementById('snakeCanvas'), sCtx = sCv.getContext('2d');
-        let snake = [{x:10, y:10}], food = {x:5, y:5}, sdx=0, sdy=0, sScore=0;
-        activeLoops.snake = false;
+        let snake = [{x:10, y:10}], food = {x:5, y:5}, dx=0, dy=0, sScore=0;
         setInterval(() => {
-            if(!activeLoops.snake) return;
-            sCtx.fillStyle="#000"; sCtx.fillRect(0,0,280,280);
-            sCtx.fillStyle= "var(--accent)"; snake.forEach(p => sCtx.fillRect(p.x*14, p.y*14, 13, 13));
-            sCtx.fillStyle="#ff4d4d"; sCtx.fillRect(food.x*14, food.y*14, 13, 13);
-            let head = {x: snake[0].x+sdx, y: snake[0].y+sdy};
+            if(!loops.snake) return;
+            sCtx.fillStyle = '#000'; sCtx.fillRect(0,0,280,280);
+            sCtx.fillStyle = '#00f3ff'; sCtx.shadowBlur = 10; sCtx.shadowColor = '#00f3ff';
+            snake.forEach(p => sCtx.fillRect(p.x*14, p.y*14, 13, 13));
+            sCtx.fillStyle = '#bc13fe'; sCtx.shadowColor = '#bc13fe';
+            sCtx.fillRect(food.x*14, food.y*14, 13, 13);
+            sCtx.shadowBlur = 0; // reset
+            let head = {x: snake[0].x+dx, y: snake[0].y+dy};
             snake.unshift(head);
-            if(head.x===food.x && head.y===food.y){ sScore+=10; document.getElementById('s-score').innerText=sScore; food={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)}; } else snake.pop();
-            if(head.x<0||head.x>19||head.y<0||head.y>19) {snake=[{x:10,y:10}]; sdx=0; sdy=0; sScore=0; document.getElementById('s-score').innerText=0;}
-        }, 150);
-        function sDir(d) { if(d==='up'&&sdy!==1){sdx=0;sdy=-1;} if(d==='down'&&sdy!==-1){sdx=0;sdy=1;} if(d==='left'&&sdx!==1){sdx=-1;sdy=0;} if(d==='right'&&sdx!==-1){sdx=1;sdy=0;} }
+            if(head.x===food.x && head.y===food.y) { sScore+=10; document.getElementById('s-score').innerText=sScore; food={x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20)}; } else snake.pop();
+            if(head.x<0||head.x>19||head.y<0||head.y>19) { snake=[{x:10,y:10}]; dx=0; dy=0; sScore=0; document.getElementById('s-score').innerText=0; }
+        }, 120);
+        function setDir(d) { if(d==='up'&&dy!==1){dx=0;dy=-1;} if(d==='down'&&dy!==-1){dx=0;dy=1;} if(d==='left'&&dx!==1){dx=-1;dy=0;} if(d==='right'&&dx!==-1){dx=1;dy=0;} }
 
-        // --- 3. XO LOGIC ---
+        // --- XO ---
         let xoTurn = 'X', xoBoard = ["","","","","","","","",""];
         function initXO() {
-            const xg = document.getElementById('xo-grid'); xg.innerHTML=''; xoBoard=["","","","","","","","",""]; xoTurn='X'; document.getElementById('xo-status').innerText = 'دور: X';
+            const xg = document.getElementById('xo-grid'); xg.innerHTML=''; xoBoard=["","","","","","","","",""]; xoTurn='X'; document.getElementById('xo-status').innerText = 'PLAYER: X';
             for(let i=0; i<9; i++) {
                 let c = document.createElement('div'); c.className='xo-cell';
                 c.onpointerdown = () => {
-                    if(!xoBoard[i]){ xoBoard[i]=xoTurn; c.innerText=xoTurn; c.style.color=xoTurn==='X'?'var(--accent)':'#ff4d4d'; checkWin(); xoTurn=xoTurn==='X'?'O':'X'; if(xoBoard.includes("")) document.getElementById('xo-status').innerText=`دور: ${xoTurn}`; }
+                    if(!xoBoard[i]) {
+                        xoBoard[i]=xoTurn; c.innerText=xoTurn; c.classList.add(xoTurn.toLowerCase());
+                        checkXO(); xoTurn=xoTurn==='X'?'O':'X'; if(xoBoard.includes("")) document.getElementById('xo-status').innerText=`PLAYER: ${xoTurn}`;
+                    }
                 }; xg.appendChild(c);
             }
         }
-        function checkWin() {
+        function checkXO() {
             const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let l of lines) if(xoBoard[l[0]] && xoBoard[l[0]]===xoBoard[l[1]] && xoBoard[l[0]]===xoBoard[l[2]]) { setTimeout(()=>alert(xoBoard[l[0]] + ' فاز!'), 100); return; }
+            for(let l of lines) if(xoBoard[l[0]] && xoBoard[l[0]]===xoBoard[l[1]] && xoBoard[l[0]]===xoBoard[l[2]]) { setTimeout(()=>alert('SYSTEM ALERT: ' + xoBoard[l[0]] + ' WINS!'), 100); return; }
         }
         initXO();
 
-        // --- 4. MEMORY LOGIC ---
-        const em = ['🎮','🎮','🎲','🎲','🎯','🎯','🏆','🏆','🧩','🧩','🕹️','🕹️','🚀','🚀','⚡','⚡'];
+        // --- MEMORY ---
+        const icons = ['💾','💾','🔋','🔋','📡','📡','💻','💻','⚙️','⚙️','⚡','⚡'];
         let mFlipped = [];
         function initMem() {
-            const mg = document.getElementById('mem-grid'); mg.innerHTML=''; let cards = [...em].sort(()=>Math.random()-0.5); mFlipped=[];
+            const mg = document.getElementById('mem-grid'); mg.innerHTML=''; let cards = [...icons].sort(()=>Math.random()-0.5); mFlipped=[];
             cards.forEach(e => {
                 let c = document.createElement('div'); c.className='mem-card';
                 c.onpointerdown = () => {
@@ -219,32 +166,6 @@
             });
         }
         initMem();
-
-        // --- 5. FLAPPY LOGIC ---
-        const fCv = document.getElementById('flappyCanvas'), fCtx = fCv.getContext('2d');
-        let fY=150, fVy=0, pipes=[], fScore=0; activeLoops.flappy=false;
-        function initFlappy() { fY=150; fVy=0; pipes=[{x:280, y:150}]; fScore=0; activeLoops.flappy=true; }
-        function flap() { if(activeLoops.flappy) fVy = -5; }
-        setInterval(() => {
-            if(!activeLoops.flappy) return;
-            fCtx.fillStyle="#1e293b"; fCtx.fillRect(0,0,280,350);
-            fVy+=0.4; fY+=fVy; fCtx.fillStyle="var(--accent)"; fCtx.fillRect(50,fY,20,20);
-            pipes.forEach(p => { p.x-=2; fCtx.fillStyle="#4caf50"; fCtx.fillRect(p.x,0,30,p.y); fCtx.fillRect(p.x,p.y+100,30,350);
-                if(p.x===50){fScore++; document.getElementById('f-score').innerText=fScore;}
-                if(50<p.x+30 && 70>p.x && (fY<p.y || fY+20>p.y+100)) activeLoops.flappy=false;
-            });
-            if(pipes[0].x < -30) pipes.shift();
-            if(pipes[pipes.length-1].x < 150) pipes.push({x:280, y:Math.random()*150+50});
-            if(fY>350 || fY<0) activeLoops.flappy=false;
-        }, 20);
-
-        // --- 6. SPEED LOGIC ---
-        let spScore=0, spActive=false;
-        function startSpeed() { spScore=0; spActive=true; document.getElementById('sp-btn').innerText=0; let t=10; document.getElementById('sp-time').innerText=`الوقت: ${t}s`;
-            let int = setInterval(()=>{ t--; document.getElementById('sp-time').innerText=`الوقت: ${t}s`; if(t<=0){clearInterval(int); spActive=false; alert('انتهى الوقت! نقاطك: '+spScore);} },1000);
-        }
-        function spClick() { if(spActive) { spScore++; document.getElementById('sp-btn').innerText=spScore; } }
-
     </script>
 </body>
 </html>
